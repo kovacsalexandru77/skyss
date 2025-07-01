@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <title>Itorrent iframe with Sidebar and Clock</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+  <style>
+    html, body, iframe {
+      margin: 0; 
+      padding: 0; 
+      width: 100%; 
+      height: 100%; 
+      border: none;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #000;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0; 
+      left: 0;
+      height: 100%;
+      width: 60px;
+      background-color: rgba(17, 17, 17, 0); 
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 30px;
+      z-index: 1000;
+    }
+
+    .sidebar a {
+      text-decoration: none;
+      color: #00f7ff;
+      font-size: 24px;
+      margin: 18px 0;
+      transition: transform 0.3s, color 0.3s;
+    }
+
+    .sidebar a:hover {
+      color: #ff00ff;
+      transform: scale(1.2);
+      text-shadow: 0 0 10px #ff00ff;
+    }
+
+    .clock {
+      position: fixed;
+      top: 4px; 
+      right: 17px;
+      font-size: 16px;
+      color: cyan;
+      background-color: #000;
+      padding: 7px 16px;
+      border-radius: 6px;
+      z-index: 10000;
+      font-weight: bold;
+    }
+
+    .sidebar-image {
+      width: 40px; 
+      height: auto; 
+      position: absolute; 
+      top: 5px; 
+      right: 10px; 
+      z-index: 1001; 
+    }
+
+    .vertical-text {
+      position: fixed;
+      left: 0; 
+      top: 0; 
+      color: cyan;
+      font-size: 18px; 
+      background-color: #000; 
+      padding: 12px; 
+      z-index: 1000; 
+      white-space: nowrap; 
+      width: 100%; 
+      text-align: left; 
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <a href="https://erik200101272008.github.io/SkysNet/" target="iframe-target">
+      <img src="https://www.pngkit.com/png/detail/270-2707687_sky-png-image.png" alt="" width="24" height="24" style="vertical-align: middle;">
+    </a>
+    <a href="https://erik200101272008.github.io/SkysNet/" target="iframe-target"><i class="bi bi-house"></i></a>
+    <a href="https://erik200101272008.github.io/SkysNet/filmek.html" target="iframe-target"><i class="bi bi-film"></i></a>
+    <a href="https://erik200101272008.github.io/SkysNet/sorozatok.html" target="iframe-target"><i class="bi bi-collection-play"></i></a>
+  </div>
+
+  <div class="vertical-text"> Sᴋʏs ꜰɪʟᴍᴇᴋ~ꜱᴏʀᴏᴢᴀᴛᴏᴋ-ꜱᴀɴᴅᴜ▶</div>
+
+  <div class="clock" id="clock"></div>
+
+  <iframe 
+    name="iframe-target" 
+    src="https://erik200101272008.github.io/SkysNet/" 
+    allow="fullscreen; autoplay; encrypted-media" 
+    allowfullscreen>
+  </iframe>
+
+  <script>
+    function updateClock() {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      document.getElementById('clock').textContent = `${hours}:${minutes}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+</body>
+</html>
