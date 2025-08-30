@@ -1,34 +1,261 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Figyelmeztetés</title>
-    <style>
-        body {
-            background-color: #e0f7fa;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .warning-box {
-            background: #b2ebf2;
-            color: #006064;
-            padding: 30px 50px;
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0, 150, 136, 0.4);
-            font-size: 24px;
-            text-align: center;
-            font-weight: bold;
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mozisandu</title>
+<style>
+:root{
+  --bg:#0b0f14;
+  --panel:#0f1621;
+  --panel-2:#121a26;
+  --muted:#7c8aa1;
+  --text:#e6f1ff;
+  --accent:#00e5ff;
+  --accent-2:#25f3ff;
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+  --radius:18px;
+}
+
+*{box-sizing:border-box;} 
+html,body{height:100%;}
+body{
+  margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",sans-serif;
+  background: radial-gradient(1200px 600px at 80% -10%, rgba(0,229,255,.10), rgba(0,0,0,0)) , var(--bg);
+  color:var(--text); overflow-x:hidden;
+}
+a{color:var(--accent); text-decoration:none;}
+
+.app{display:grid; grid-template-columns: 78px 1fr; min-height:100dvh;}
+
+.sidebar{
+  position:sticky;
+  top:0;
+  height:100dvh;
+  background:linear-gradient(180deg,var(--panel), var(--panel-2));
+  border-right:1px solid rgba(255,255,255,.05);
+  padding:10px 8px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  box-shadow: var(--shadow);
+  z-index:3;
+}
+
+.brand{
+  display:grid; place-items:center;
+  height:54px; border-radius:14px;
+  background:linear-gradient(135deg, rgba(0,229,255,.08), rgba(255,255,255,.02));
+  outline:1px solid rgba(255,255,255,.06);
+  font-weight:800; letter-spacing:.5px; font-size:12px;
+  text-transform:uppercase; color:var(--accent);
+  text-shadow:0 0 18px rgba(37,243,255,.6);
+}
+
+.cat{
+  display:grid; place-items:center; height:56px; width:56px; border-radius:16px; cursor:pointer;
+  transition:transform .12s ease, background .2s ease, outline-color .2s ease;
+  background:rgba(255,255,255,.03); outline:1px solid rgba(255,255,255,.06);
+}
+.cat:hover{ background:rgba(255,255,255,.06); }
+.cat svg{ width:26px; height:26px; opacity:.92; stroke:cyan; transition: transform 0.2s ease; }
+
+.spacer{ flex:1 }
+.foot-note{ font-size:10px; color:var(--muted); text-align:center; opacity:.7 }
+
+iframe{width:100%; height:1500px; border:none;}
+
+.clock {
+  position: fixed;
+  top: 4px;
+  right: 17px;
+  font-size: 16px;
+  color: cyan;
+  background: none;
+  padding: 7px 16px;
+  border-radius: 6px;
+  z-index: 10000;
+  font-weight: bold;
+}
+
+.vertical-text {
+  position: fixed;
+  left: 120px;
+  top: 0;
+  color: cyan;
+  font-size: 18px;
+  padding: 8px;
+  z-index: 1000;
+  white-space: nowrap;
+  background: none;
+  width: auto;
+  text-align: left;  
+}
+
+.cat:hover svg, .topbar a:hover {
+  animation: neonPulse 1.5s infinite ease-in-out;
+  transform: scale(1.1);
+}
+
+@keyframes neonPulse {
+  0%   { stroke: cyan;    filter: drop-shadow(0 0 6px cyan); color: cyan;}
+  25%  { stroke: lime;    filter: drop-shadow(0 0 12px lime); color: lime;}
+  50%  { stroke: magenta; filter: drop-shadow(0 0 18px magenta); color: magenta;}
+  75%  { stroke: yellow;  filter: drop-shadow(0 0 12px yellow); color: yellow;}
+  100% { stroke: cyan;    filter: drop-shadow(0 0 6px cyan); color: cyan;}
+}
+
+#tooltip {
+  position: fixed;
+  background: rgba(0,0,0,0.9);
+  color: cyan;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 9999;
+  white-space: nowrap;
+  text-shadow: 0 0 6px cyan;
+}
+#tooltip.show{
+  opacity:1;
+  transform: translateY(-4px);
+}
+
+.topbar{
+  position: fixed;
+  top:0; left:0; right:0;
+  height:48px;
+  background: rgba(0,0,0,0.9);
+  display: flex; gap:4px; align-items:center; padding:0 10px;
+  z-index:2000;
+  box-shadow: var(--shadow);
+}
+.topbar a{
+  padding:10px 14px;
+  border-radius:6px;
+  color:cyan;
+  font-weight:bold;
+  transition: all 0.3s ease;
+}
+.topbar a:hover{
+  background: rgba(0,0,0,0.5);
+}
+
+/* Hamburger */
+.hamburger {
+  display: none;
+  position: fixed;
+  top: 12px;
+  left: calc(78px + 10px); /* sidebar szélessége + távolság */
+  width: 30px;
+  height: 24px;
+  z-index: 2500;
+  cursor: pointer;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.hamburger div {
+  height: 4px;
+  background: cyan;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+.hamburger.active div:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.active div:nth-child(2) { opacity: 0; }
+.hamburger.active div:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+/* Mobil dropdown animáció */
+@media (max-width:900px){
+  .topbar{ display:none; flex-direction:column;}
+  .topbar.show{ display:flex; animation:fadeSlideDown 0.3s ease forwards;}
+  @keyframes fadeSlideDown{
+    0%{opacity:0; transform:translateY(-20px);}
+    100%{opacity:1; transform:translateY(0);}
+  }
+  .hamburger{ display:flex; }
+}
+</style>
 </head>
 <body>
-    <div class="warning-box">
-        ⚠ Figyelmeztetés: FIZESEL ELLO BAZMEG!!!! VAGY VED MEG AZ appot megvasarolhato,a demo tájékoztató jellegű! ⚠Tel: @sanduapk
-    </div>
+
+<div class="clock" id="clock"></div>
+
+<div class="hamburger" id="hamburger">
+  <div></div>
+  <div></div>
+  <div></div>
+</div>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">Mozi</div>
+
+    <!-- Kategóriák -->
+    <div class="cat" title="Főoldal" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12l9-9 9 9-9 9-9-9z"/></svg></div>
+    <div class="cat" title="Filmek" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/filmek.html')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16v16H4z"/></svg></div>
+    <div class="cat" title="Sorozatok" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/sorozatok.html')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/></svg></div>
+    <div class="cat" title="Akció" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/akcio.html')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 12h20"/><path d="M12 2v20"/></svg></div>
+    <div class="cat" title="Animációs" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/animációs.html')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="5,3 19,12 5,21 5,3"/></svg></div>
+    <div class="cat" title="Dráma" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/drama.html')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16v16H4z"/><line x1="4" y1="4" x2="20" y2="20"/></svg></div>
+    <div class="cat" title="Thriller" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/thriller.html')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="8"/><line x1="12" y1="4" x2="12" y2="20"/></svg></div>
+    <div class="cat" title="Horror" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/horror.html')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l3 7h-6l3-7z"/><path d="M5 22h14v-2H5v2z"/></svg></div>
+    <div class="cat" title="Romantikus" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/romantikus.html')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 21s-6-4.35-10-10c0 0 4-9 10-1 6-8 10 1 10 1-4 5.65-10 10-10 10z"/></svg></div>
+    <div class="cat" title="Sport" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/sport.html')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/></svg></div>
+    <div class="cat" title="Vígjáték" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/vigjatek.html')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="8" cy="12" r="2"/><circle cx="16" cy="12" r="2"/><path d="M8 18c2-2 6-2 8 0"/></svg></div>
+    <div class="cat" title="Életrajzi" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/oneletrajz.html')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="10" r="2"/></svg></div>
+    <div class="cat" title="Sci-Fi & Fantasy" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/sci-fi%20fantasy.html')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 12l10-10 10 10-10 10-10-10z"/></svg></div>
+    <div class="cat" title="Marvel" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/marvel.html')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16v16H4z"/><circle cx="12" cy="12" r="6"/></svg></div>
+    <div class="cat" title="DC" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/dc.html')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 12h20"/><circle cx="12" cy="12" r="10"/></svg></div>
+
+    <div class="spacer"></div>
+    <div class="foot-note">©MoziSandu</div>
+  </aside>
+
+  <iframe src="https://erik200101272008.github.io/SkysNet/" frameborder="0" allowfullscreen></iframe>
+</div>
+
+<div class="topbar" id="topbar">
+  <a href="#" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/')">Főoldal</a>
+  <a href="#" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/filmek.html')">Filmek</a>
+  <a href="#" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/sorozatok.html')">Sorozatok</a>
+  <a href="#" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/akcio.html')">Akció</a>
+  <a href="#" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/animációs.html')">Animációs</a>
+  <a href="#" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/drama.html')">Dráma</a>
+  <a href="#" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/thriller.html')">Thriller</a>
+  <a href="#" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/horror.html')">Horror</a>
+  <a href="#" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/romantikus.html')">Romantikus</a>
+  <a href="#" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/sport.html')">Sport</a>
+  <a href="#" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/vigjatek.html')">Vígjáték</a>
+  <a href="#" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/oneletrajz.html')">Életrajzi</a>
+  <a href="#" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/sci-fi%20fantasy.html')">Sci-Fi & Fantasy</a>
+  <a href="#" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/marvel.html')">Marvel</a>
+  <a href="#" onclick="changeCategory('https://erik200101272008.github.io/SkysNet/dc.html')">DC</a>
+</div>
+
+<div class="vertical-text">Sᴀɴᴅᴜ▶</div>
+<div id="tooltip"></div>
+
+<script>
+function changeCategory(url){document.querySelector('iframe').src = url;}
+function updateClock(){const now=new Date();const hours=now.getHours().toString().padStart(2,'0');const minutes=now.getMinutes().toString().padStart(2,'0');document.getElementById('clock').textContent = `${hours}:${minutes}`;}
+setInterval(updateClock,1000); updateClock();
+
+// Tooltip
+const tooltip=document.getElementById("tooltip");
+document.querySelectorAll(".cat").forEach(cat=>{
+  cat.addEventListener("mouseenter",()=>{tooltip.textContent=cat.getAttribute("title"); tooltip.classList.add("show");});
+  cat.addEventListener("mousemove",e=>{tooltip.style.left=(e.pageX+12)+"px"; tooltip.style.top=(e.pageY-28)+"px";});
+  cat.addEventListener("mouseleave",()=>{tooltip.classList.remove("show");});
+});
+
+// Hamburger
+const hamburger=document.getElementById('hamburger');
+const topbar=document.getElementById('topbar');
+hamburger.addEventListener('click',()=>{hamburger.classList.toggle('active'); topbar.classList.toggle('show');});
+</script>
 </body>
 </html>
